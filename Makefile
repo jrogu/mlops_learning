@@ -7,3 +7,6 @@ test:
 
 install:
 	pip install -r requirements.txt
+
+format:
+	black **/*.py --line-length 80
