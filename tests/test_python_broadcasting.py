@@ -1,6 +1,6 @@
 import unittest
 import torch
-from tensor_broadcasting import broadcast_tensors
+from main import broadcast_tensors
 
 
 class TestCalculations(unittest.TestCase):
