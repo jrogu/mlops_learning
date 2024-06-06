@@ -21,7 +21,9 @@ jobs:
     - name: Install dependencies
       run: make install
 
-    - name: Run tests
+    - name: Run 
+      env:
+        PYTHONPATH: ${{ github.workspace }}
       run: make test
 
     - name: Format code
