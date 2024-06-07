@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -21,9 +24,6 @@ jobs:
     - name: Install dependencies
       run: make install
 
-    - name: Print PYTHONPATH
-      run: echo $PYTHONPATH
-
     - name: Run tests
       env:
         PYTHONPATH: ${{ github.workspace }}
@@ -35,5 +35,5 @@ jobs:
     - name: Build Docker image
       run: make build
       env:
-        IMAGE_NAME: mlops_imagem
+        IMAGE_NAME: mlops_image
         TAG: latest
