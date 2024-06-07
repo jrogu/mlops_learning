@@ -24,13 +24,6 @@ jobs:
     - name: Print PYTHONPATH
       run: echo $PYTHONPATH
 
-    - name: List repository structure
-      run: |
-        echo "Root directory:"
-        ls -la
-        echo "Tests directory:"
-        ls -la tests
-
     - name: Run tests
       env:
         PYTHONPATH: ${{ github.workspace }}
