@@ -1,5 +1,7 @@
+CONTAINER_NAME=mlops_container
 IMAGE_NAME=mlops_imagem
 TAG=latest
+
 
 .PHONY: all
 all: install test format build 
@@ -12,14 +14,19 @@ test:
 install:
 	pip install -r requirements.txt
 
+
 .PHONY: build
 build:
 	docker build -t $(IMAGE_NAME):$(TAG) .
+
+.PHONY: run
+run:
+	docker run --name $(CONTAINER_NAME) -d $(IMAGE_NAME):$(TAG)
 
 .PHONY: clean
 clean:
 	docker rmi $(IMAGE_NAME):$(TAG)
 
-.PHONY: format
+.PHONY: format	
 format:
 	black **/*.py --line-length 80
