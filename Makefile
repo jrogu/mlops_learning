@@ -27,6 +27,10 @@ run:
 clean:
 	docker rmi $(IMAGE_NAME):$(TAG)
 
+.PHONY: stop
+stop:
+	docker stop $(CONTAINER_NAME) && docker rm $(CONTAINER_NAME)
+
 .PHONY: format	
 format:
 	black **/*.py --line-length 80
