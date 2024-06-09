@@ -37,3 +37,9 @@ jobs:
       env:
         IMAGE_NAME: mlops_image
         TAG: latest
+
+    - name: Run docker image
+      run: make run
+
+    - name: stop
+      run: make stop
