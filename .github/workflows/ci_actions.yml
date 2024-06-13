@@ -20,7 +20,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+  test:
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Install dependencies
       run: make install
 
@@ -43,3 +46,15 @@ jobs:
 
     - name: stop
       run: make stop
+    
+    - name: clean
+      run: make clean
+
+    - name: compose build
+      run: make compose build
+
+    - name: compose up
+      run: make compose up
+
+    - name: compose down
+      run: make compose down
