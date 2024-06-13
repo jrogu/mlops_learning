@@ -16,7 +16,7 @@ install:
 
 
 .PHONY: build
-build:
+build:	
 	docker build -t $(IMAGE_NAME):$(TAG) .
 
 .PHONY: run
@@ -30,6 +30,18 @@ clean:
 .PHONY: stop
 stop:
 	docker stop $(CONTAINER_NAME) && docker rm $(CONTAINER_NAME)
+
+.PHONY:
+compose build:
+	docker-compose build
+
+.PHONY:
+compose up:
+	docker-compose up
+
+.PHONY:
+compose down:
+	docker-compose down
 
 .PHONY: format	
 format:
