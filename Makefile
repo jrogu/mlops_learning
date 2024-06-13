@@ -19,7 +19,7 @@ install:
 build:	
 	docker build -t $(IMAGE_NAME):$(TAG) .
 
-.PHONY: run
+.PHONY: docker run
 run:
 	docker run --name $(CONTAINER_NAME) -d $(IMAGE_NAME):$(TAG)
 

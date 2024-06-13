@@ -42,7 +42,7 @@ jobs:
         TAG: latest
 
     - name: Run docker image
-      run: make run
+      run: make docker run
 
     - name: stop
       run: make stop
