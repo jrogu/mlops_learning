@@ -32,15 +32,15 @@ stop:
 	docker stop $(CONTAINER_NAME) && docker rm $(CONTAINER_NAME)
 
 .PHONY:
-compose build:
+compose_build:
 	docker-compose build
 
 .PHONY:
-compose up:
+compose_up:
 	docker-compose up
 
 .PHONY:
-compose down:
+compose_down:
 	docker-compose down
 
 .PHONY: format	
