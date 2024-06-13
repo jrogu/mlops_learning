@@ -1,5 +1,5 @@
 CONTAINER_NAME=mlops_container
-IMAGE_NAME=mlops_imagem
+IMAGE_NAME=mlops_image
 TAG=latest
 
 
