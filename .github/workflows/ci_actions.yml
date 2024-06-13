@@ -48,10 +48,10 @@ jobs:
       run: make clean
 
     - name: compose build
-      run: make compose build
+      run: make compose_build
 
     - name: compose up
-      run: make compose up
+      run: make compose_up
 
     - name: compose down
-      run: make compose down
+      run: make compose_down
