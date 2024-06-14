@@ -21,6 +21,10 @@ jobs:
       with:
         python-version: '3.x'
 
+  make-runs:
+    runs-on: ubuntu-latest
+    steps:
+
     - name: Install dependencies
       run: make install
 
