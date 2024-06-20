@@ -15,10 +15,16 @@ services:
       POSTGRES_PASSWORD: yourpassword
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yourusername"]  
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   createdb:
     build: .
     command: python create_db.py
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 

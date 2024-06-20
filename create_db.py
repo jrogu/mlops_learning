@@ -6,7 +6,7 @@ def create_database():
         dbname='postgres',
         user='postgres',
         password='passwrd',
-        host='localhost',  
+        host='db',  
         port='5432'
     )
 
