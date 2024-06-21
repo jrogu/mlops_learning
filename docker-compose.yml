@@ -11,8 +11,8 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: yourusername
-      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passwrd
     ports:
       - "5432:5432"
     healthcheck:
