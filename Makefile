@@ -37,7 +37,7 @@ compose_build:
 
 .PHONY:
 compose_up:
-	docker-compose up
+	docker-compose up -d
 
 .PHONY:
 compose_down:
