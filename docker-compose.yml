@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:80"
     command: python main.py
-    restart: no
+    restart: "no"
 
   db:
     image: postgres:latest
@@ -22,12 +22,12 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    restart: no
-  
+    restart: "no"
+
   createdb:
     build: .
     command: python create_db.py
     depends_on:
       db:
         condition: service_healthy
-    restart: no
+    restart: "no"
