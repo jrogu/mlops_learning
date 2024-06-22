@@ -14,16 +14,15 @@ def create_database():
 
     cur = conn.cursor()
 
-    cur.execute("SELECT 1 FROM pg_database WHERE datname='yourdbname'")
+    cur.execute("SELECT 1 FROM pg_database WHERE datname=postgres")
     exists = cur.fetchone()
     if not exists:
-        cur.execute('CREATE DATABASE yourdbname')
+        cur.execute('CREATE DATABASE postgres')
     else:
         print("Database 'yourdbname' already exists")
 
-    # Close the connection
     cur.close()
     conn.close()
-
+    print("Database created")
 if __name__ == '__main__':
     create_database()
