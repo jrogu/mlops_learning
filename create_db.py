@@ -1,14 +1,20 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import os
+from dotenv import load_dotenv
 
-def create_database():
-    conn = psycopg2.connect(
-        dbname='postgres',
-        user='postgres',
-        password='passwrd',
-        host='db',  
-        port='5432'
+load_dotenv()
+
+def connect():
+    return psycopg2.connect(
+        dbname=os.getenv('POSTGRES_DB'),
+        user=os.getenv('POSTGRES_USER'),
+        password=os.getenv('POSTGRES_PASSWORD'),
+        host=os.getenv('POSTGRES_HOST'),
+        port=os.getenv('POSTGRES_PORT')
     )
+def create_database():
+    conn = connect()
 
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
@@ -26,13 +32,7 @@ def create_database():
     print("Database created")
 
 def create_table_and_insert_rows():
-    conn = psycopg2.connect(
-        dbname='postgres',
-        user='postgres',
-        password='passwrd',
-        host='db',  
-        port='5432'
-    )
+    conn = connect()
 
     cur = conn.cursor()
     cur.execute("""
@@ -53,5 +53,6 @@ def create_table_and_insert_rows():
     print("Table created and rows inserted")
 
 if __name__ == '__main__':
+    
     create_database()
     create_table_and_insert_rows()

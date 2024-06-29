@@ -12,14 +12,14 @@ services:
   db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passwrd
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]  
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
     restart: "no"
