@@ -24,6 +24,12 @@ jobs:
   make-runs:
     runs-on: ubuntu-latest
 
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      PYTHONPATH: ${{ github.workspace }}
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -32,8 +38,7 @@ jobs:
       run: make install
 
     - name: Run tests
-      env:
-        PYTHONPATH: ${{ github.workspace }}
+        
       run: make test
 
     - name: Format code
