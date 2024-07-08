@@ -3,4 +3,4 @@ black==24.4.2
 psycopg2
 python-dotenv
 flask
-pytorch
+torch
