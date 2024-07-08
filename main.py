@@ -1,12 +1,62 @@
+from flask import Flask, request, jsonify, render_template
 import numpy as np
+from torchvision.models import resnet18, ResNet18_Weights
+import torch 
+import os
+from PIL import Image
+from torchvision import datasets
+import torchvision.transforms as transforms
+import ast
 
-def broadcast_tensors(tensor1, tensor2):
-    broadcasted_tensor2 = np.broadcast_to(tensor2, tensor1.shape)
-    print(broadcasted_tensor2.shape, broadcasted_tensor2)
-    return broadcasted_tensor2.shape, broadcasted_tensor2
+app = Flask(__name__)
+
+model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
+model.eval()
+
+IMG_PATH = 'doc.png'
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+def classify_image(image):
+    image = transform(image).unsqueeze(0)
+    with torch.no_grad():
+        outputs = model(image)
+        _, predicted = torch.max(outputs, 1)
+    return predicted.item()
+
+def get_labels():
+    with open('imagenet1000_clsidx_to_labels.txt', 'r') as file:
+        data = file.read()
+
+    labels_dict = ast.literal_eval(data)
+    return labels_dict
+
+labels = get_labels()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+
+    if file:
+        image = Image.open(file)
+        print(type(image))
+        print(image)
+        prediction = classify_image(image)
+        return jsonify({'prediction': labels[prediction]})
 
 if __name__ == "__main__":
-    tensor1 = np.array([[1, 2, 3], [4, 5, 6]])
-    tensor2 = np.array([1, 1, 1])
-
-    broadcast_tensors(tensor1, tensor2)
+    app.run(debug=True, host='0.0.0.0', port=5000)
+    
