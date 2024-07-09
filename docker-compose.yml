@@ -2,13 +2,13 @@ version: '3.8'
 services:
   app:
     build: .
-    volumes:
-      - .:/app
     ports:
-      - "8000:80"
-    command: python main.py
+      - "5000:5000"
+    command: sh -c "python create_db.py && python main.py"
     restart: "no"
-
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:latest
     environment:
@@ -23,11 +23,8 @@ services:
       timeout: 10s
       retries: 5
     restart: "no"
-
-  createdb:
-    build: .
-    command: python create_db.py
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: "no"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      
+volumes:
+  postgres_data:

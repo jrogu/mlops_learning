@@ -7,13 +7,14 @@ from PIL import Image
 from torchvision import datasets
 import torchvision.transforms as transforms
 import ast
+import psycopg2
+from create_db import add_row
 
 app = Flask(__name__)
 
 model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
 model.eval()
 
-IMG_PATH = 'doc.png'
 transform = transforms.Compose([
     transforms.Resize(224),
     transforms.ToTensor(),
@@ -36,6 +37,7 @@ def get_labels():
 
 labels = get_labels()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -51,9 +53,10 @@ def predict():
 
     if file:
         image = Image.open(file)
-        print(type(image))
-        print(image)
         prediction = classify_image(image)
+        add_row(prediction=labels[prediction], 
+                prediction_id=prediction)
+        
         return jsonify({'prediction': labels[prediction]})
 
 if __name__ == "__main__":

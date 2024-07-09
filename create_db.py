@@ -13,6 +13,19 @@ def connect():
         host=os.getenv('POSTGRES_HOST'),
         port=os.getenv('POSTGRES_PORT')
     )
+    
+def add_row(prediction, prediction_id):
+    conn = connect()
+
+    cur = conn.cursor()    
+
+    cur.execute(""" INSERT INTO results 
+                (prediction, prediction_id) 
+                VALUES (%s, %s)""", (prediction, prediction_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    
 def create_database():
     conn = connect()
 
@@ -36,15 +49,12 @@ def create_table_and_insert_rows():
 
     cur = conn.cursor()
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS test (
+        CREATE TABLE IF NOT EXISTS results (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(100),
-            age INT
+            prediction VARCHAR(100),
+            prediction_id INT
         )
     """)
-
-    cur.execute("INSERT INTO test (name, age) VALUES (%s, %s)", ("Alice", 30))
-    cur.execute("INSERT INTO test (name, age) VALUES (%s, %s)", ("Bob", 25))
 
     conn.commit()
 
