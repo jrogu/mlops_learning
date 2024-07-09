@@ -5,10 +5,12 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8000:80"
-    command: python main.py
+      - "5000:5000"
+    command: python main.py && python create_db.py 
     restart: "no"
-
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:latest
     environment:
@@ -22,12 +24,4 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    restart: "no"
-
-  createdb:
-    build: .
-    command: python create_db.py
-    depends_on:
-      db:
-        condition: service_healthy
     restart: "no"
