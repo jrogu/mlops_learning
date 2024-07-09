@@ -1,6 +1,5 @@
 FROM pytorch/pytorch:2.3.1-cuda11.8-cudnn8-runtime
 
-
 COPY requirements.txt .
 
 RUN apt-get update \
@@ -11,6 +10,5 @@ RUN apt-get update \
 COPY . .
 
 EXPOSE 5000
-#RUN python -m unittest discover -s tests
 
 CMD ["python", "main.py"]
