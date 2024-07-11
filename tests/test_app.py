@@ -1,10 +1,6 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from app import app, classify_image, get_labels
-from create_db import add_row, connect
-from PIL import Image
-import io
+from app import app
+
 
 class TestFlaskApp(unittest.TestCase):
 
