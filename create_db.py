@@ -14,14 +14,14 @@ def connect():
         port=os.getenv('POSTGRES_PORT')
     )
     
-def add_row(prediction, prediction_id):
+def add_row(prediction, probability):
     conn = connect()
 
     cur = conn.cursor()    
 
     cur.execute(""" INSERT INTO results 
-                (prediction, prediction_id) 
-                VALUES (%s, %s)""", (prediction, prediction_id))
+                (prediction, probability) 
+                VALUES (%s, %s)""", (prediction, probability))
     conn.commit()
     cur.close()
     conn.close()
@@ -52,7 +52,7 @@ def create_table_and_insert_rows():
         CREATE TABLE IF NOT EXISTS results (
             id SERIAL PRIMARY KEY,
             prediction VARCHAR(100),
-            prediction_id INT
+            probability FLOAT
         )
     """)
 
