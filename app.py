@@ -1,13 +1,10 @@
 from flask import Flask, request, jsonify, render_template
-import numpy as np
 from torchvision.models import resnet18, ResNet18_Weights
+import torch.nn.functional as F
 import torch 
-import os
 from PIL import Image
-from torchvision import datasets
 import torchvision.transforms as transforms
 import ast
-import psycopg2
 from create_db import add_row
 
 app = Flask(__name__)
@@ -26,7 +23,7 @@ def classify_image(image):
     with torch.no_grad():
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)
-    return predicted.item()
+    return predicted.item(), outputs
 
 def get_labels():
     with open('imagenet1000_clsidx_to_labels.txt', 'r') as file:
@@ -36,7 +33,6 @@ def get_labels():
     return labels_dict
 
 labels = get_labels()
-
 
 @app.route('/')
 def index():
@@ -53,9 +49,11 @@ def predict():
 
     if file:
         image = Image.open(file)
-        prediction = classify_image(image)
+        prediction, outputs = classify_image(image)
+        probability, _= torch.max(F.softmax(outputs, dim=-1), dim=1)
+        probability = probability.item()
         add_row(prediction=labels[prediction], 
-                prediction_id=prediction)
+                probability=probability)
         
         return jsonify({'prediction': labels[prediction]})
 
