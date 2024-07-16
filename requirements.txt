@@ -1,7 +1,8 @@
-numpy
+numpy==1.24.3
 black==24.4.2
 psycopg2
 python-dotenv
 flask
-torch
-torchvision
+torch==2.2.1+cpu
+torchvision==0.17.1+cpu
+-f https://download.pytorch.org/whl/torch_stable.html

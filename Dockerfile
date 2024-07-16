@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.3.1-cuda11.8-cudnn8-runtime
+FROM python:3.9-slim
 
 COPY requirements.txt .
 

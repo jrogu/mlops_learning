@@ -6,6 +6,7 @@ from PIL import Image
 import torchvision.transforms as transforms
 import ast
 from create_db import add_row
+import numpy as np
 
 app = Flask(__name__)
 
