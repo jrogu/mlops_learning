@@ -4,7 +4,7 @@ This project is inspired by book `Practical MLOps_ Operationalizing Machine Lear
 
 ## Project Overview
 
-It's purpose it's to get familiar with concepts like CI/CD, deploying models with contenerization, etc.
+It's purpose it's to get familiar with concepts like CI/CD, deploying models with containerization, etc.
 
 ## Table of Contents
 
@@ -63,16 +63,12 @@ Add .env file and fill it with essential credidentials for database connection
 
 5. Pass an image and check the precision
 
-![example](images\working_app_example.png)
-
-## Usage
-
-
+![example](images/working_app_example.png)
 
 ## CI/CD Pipeline
 
 This project uses GitHub Actions for CI/CD. The pipeline includes:
-
+- secrets to make it work without passing credidentials inside repo
 - Automated testing
 - Docker building/running based on makefile
 
@@ -92,6 +88,10 @@ All predictions are stored inside postgresql table named `resulst`
 After running the project and passing an image, to see stored predictions run:
 `docker exec -it mlops_learning-db-1 psql -U your_username`
 and then `SELECT * FROM results`
-Example results: ![example_db](images\test_prediction_results.png)
+Example results: ![example_db](images/test_prediction_results.png)
 
 They are stored in docker volume, they are not erased after stopping docker.
+
+# TODO
+- add more tests
+- adjust github actions/makefile to major changes in code
