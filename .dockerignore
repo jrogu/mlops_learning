@@ -1,0 +1,9 @@
+.github/
+tests/
+__pycache__/
+.gitignore
+hap.png
+Makefile
+README.md
+docker-compose.yml
+.dockerignore
