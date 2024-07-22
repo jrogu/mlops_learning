@@ -4,7 +4,10 @@ This project is inspired by book `Practical MLOps_ Operationalizing Machine Lear
 
 ## Project Overview
 
-It's purpose it's to get familiar with concepts like CI/CD, deploying models with containerization, etc.
+It's purpose it's to get familiar with concepts like CI/CD, deploying models with containerization, etc.  
+  
+This projects creates simple flask app, where you can pass an image to pretrained resnet18 and get prediction. The flask app and attached PostgreSQL db is containerizationed. This project contains tests, a Makefile, and uses GitHub Actions for CI/CD.
+
 
 ## Table of Contents
 
@@ -20,7 +23,7 @@ It's purpose it's to get familiar with concepts like CI/CD, deploying models wit
 - Python 
 - Docker
 - PostgreSQL
-- github actions
+- GitHub Actions
 - Makefile
 
 - python libraries listed in `requirements.txt`
@@ -65,6 +68,10 @@ Add .env file and fill it with essential credidentials for database connection
 
 ![example](images/working_app_example.png)
 
+Or run:
+```
+curl -X POST -F "file=@/path/to/your/image.jpg" http://localhost:5000/predict
+```
 ## CI/CD Pipeline
 
 This project uses GitHub Actions for CI/CD. The pipeline includes:
@@ -80,11 +87,10 @@ To run tests locally:
 make test
 
 ```
-TODO add more tests
 
 ## Prediction storing
 
-All predictions are stored inside postgresql table named `resulst`
+All predictions are stored inside postgresql table named `results`
 After running the project and passing an image, to see stored predictions run:
 `docker exec -it mlops_learning-db-1 psql -U your_username`
 and then `SELECT * FROM results`
