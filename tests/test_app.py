@@ -11,5 +11,12 @@ class TestFlaskApp(unittest.TestCase):
     def test_index_route(self):
         response = self.app.get('/')
         self.assertEqual(response.status_code, 200)
+    
+    def test_predict_route(self):
+        response = self.app.post('/predict')
+        self.assertEqual(response.status_code, 200)
+
         
-    # TODO
+if __name__ == '__main__':
+    unittest.main() 
+    
