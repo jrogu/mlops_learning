@@ -6,15 +6,7 @@ import tqdm as tqdm
 import numpy as np
 from torchvision import transforms
 from torchvision.models import resnet18, ResNet18_Weights
-
-
-TRAIN_PATH = 'data/train/'
-TEST_PATH = 'data/train/'
-TRAIN_CSV_DATA = 'data/Training_set.csv'
-np.random.seed(42)
-TRAIN_RATIO = 0.8
-
-
+import argparse 
 
 
 def get_transforms():
@@ -49,12 +41,12 @@ class Dataset:
             
         return img, torch.tensor(label)
     
-def prepare_data(transforms):
+def prepare_data(transforms, train_path, train_csv_path, train_ratio, batch_size):
     
-    df = pd.read_csv(TRAIN_CSV_DATA)
+    df = pd.read_csv(train_csv_path)
     df['is_train'] = np.random.choice([1, 0], 
                                       size=len(df), 
-                                      p=[TRAIN_RATIO, 1- TRAIN_RATIO])
+                                      p=[train_ratio, 1- train_ratio])
 
     labels = df['label'].unique()
     
@@ -63,17 +55,17 @@ def prepare_data(transforms):
     df_train = df[df['is_train'] == 1]
     df_val = df[df['is_train'] == 0]
     
-    train_dataset = Dataset(TRAIN_PATH, df_train, transforms)
-    val_dataset = Dataset(TRAIN_PATH, df_val, transforms)
+    train_dataset = Dataset(train_path, df_train, transforms)
+    val_dataset = Dataset(train_path, df_val, transforms)
     
     train_dataloader = torch.utils.data.DataLoader(dataset=train_dataset,
                                                 shuffle=True,
-                                                batch_size = 16,
+                                                batch_size = batch_size,
                                                 num_workers=0)
 
     val_dataloader = torch.utils.data.DataLoader(dataset=val_dataset,
                                                 shuffle=False,
-                                                batch_size = 16,
+                                                batch_size = batch_size,
                                                 num_workers=0)
 
     return train_dataloader, val_dataloader, len(labels)
@@ -125,11 +117,34 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, n
 
     return model
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Training image classification')
+    
+    parser.add_argument('--train_path', type=str, default='data/train/', help='Path to training data')
+    parser.add_argument('--test_path', type=str, default='data/test/', help='Path to test data')
+    parser.add_argument('--train_csv', type=str, default='data/Training_set.csv', help='Path to csv containing path/label info')
+    parser.add_argument('--train_ratio', type=float, default=0.8, help='Train/val split ratio')
+    
+    parser.add_argument('--batch_size', type=int, default=8, help='Batch size for training and evaluation')
+    parser.add_argument('--learning_rate', type=float, default=1e-4, help='Learning rate for optimizer')
+    parser.add_argument('--num_epochs', type=int, default=5, help='Number of training epochs')
+
+    return parser.parse_args()
+
+def seed_everything():
+    np.random.seed(42)
+
 def main():
+    
+    args = parse_args()
     
     transforms = get_transforms()
     
-    train_dataloader, val_dataloader, num_classes = prepare_data(transforms) 
+    train_dataloader, val_dataloader, num_classes = prepare_data(transforms, 
+                                                                 args.train_path, 
+                                                                 args.train_csv, 
+                                                                 args.train_ratio,
+                                                                 args.batch_size) 
     
     device = ('cuda' if torch.cuda.is_available() else 'cpu')
     model = resnet18()
@@ -137,9 +152,11 @@ def main():
     model.to(device)
 
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
     
-    model = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, device, num_epochs=10)
+    model = train_model(model=model, train_loader=train_dataloader, 
+                        val_loader=val_dataloader, criterion=criterion, 
+                        optimizer=optimizer, device=device, num_epochs=args.num_epochs)
 
 if __name__ == '__main__':
     main()
