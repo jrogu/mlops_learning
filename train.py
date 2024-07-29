@@ -2,12 +2,13 @@ import torch
 from PIL import Image
 import pandas as pd
 import os
-import tqdm as tqdm
+from tqdm import tqdm
 import numpy as np
 from torchvision import transforms
 from torchvision.models import resnet18, ResNet18_Weights
 import argparse 
-
+from torch.utils.data import Dataset, DataLoader
+import random
 
 def get_transforms():
     train_transforms = transforms.Compose([transforms.Resize(224),
@@ -18,7 +19,7 @@ def get_transforms():
     return {'train' : train_transforms,
                 'val' : val_transforms}
 
-class Dataset:
+class Image_dataset(Dataset):
     def __init__(self, train_path, df, transform):
         self.images_path = train_path
         self.df = df
@@ -55,18 +56,26 @@ def prepare_data(transforms, train_path, train_csv_path, train_ratio, batch_size
     df_train = df[df['is_train'] == 1]
     df_val = df[df['is_train'] == 0]
     
-    train_dataset = Dataset(train_path, df_train, transforms)
-    val_dataset = Dataset(train_path, df_val, transforms)
+    train_dataset = Image_dataset(train_path, df_train, transforms)
+    val_dataset = Image_dataset(train_path, df_val, transforms)
     
-    train_dataloader = torch.utils.data.DataLoader(dataset=train_dataset,
+    #seed generator for reproducibility
+    g = torch.Generator()
+    g.manual_seed(42)
+
+    train_dataloader = DataLoader(dataset=train_dataset,
                                                 shuffle=True,
                                                 batch_size = batch_size,
-                                                num_workers=0)
+                                                num_workers=0,
+                                                worker_init_fn=seed_worker,
+                                                generator=g)
 
-    val_dataloader = torch.utils.data.DataLoader(dataset=val_dataset,
+    val_dataloader = DataLoader(dataset=val_dataset,
                                                 shuffle=False,
                                                 batch_size = batch_size,
-                                                num_workers=0)
+                                                num_workers=0,
+                                                worker_init_fn=seed_worker,
+                                                generator=g)
 
     return train_dataloader, val_dataloader, len(labels)
 
@@ -78,7 +87,7 @@ def train_eval_epoch(model, dataloader, criterion, optimizer, device, is_trainin
     total = 0
 
     with torch.set_grad_enabled(is_training):
-        for inputs, labels in tqdm.tqdm(dataloader, desc='Train' if is_training else 'Eval'):
+        for inputs, labels in tqdm(dataloader, desc='Train' if is_training else 'Eval'):
             inputs, labels = inputs.to(device), labels.to(device)
 
             outputs = model(inputs)
@@ -131,10 +140,27 @@ def parse_args():
 
     return parser.parse_args()
 
-def seed_everything():
-    np.random.seed(42)
+def seed_everything(seed=42):
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
+def seed_worker(worker_id):   
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
+    
+
 
 def main():
+    
+    seed_everything()
     
     args = parse_args()
     
