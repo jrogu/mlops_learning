@@ -157,6 +157,11 @@ def seed_worker(worker_id):
     random.seed(worker_seed)
     
 
+def create_model(num_classes, device):
+    model = resnet18()
+    model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
+    model.to(device)
+    return model
 
 def main():
     
@@ -171,11 +176,9 @@ def main():
                                                                  args.train_csv, 
                                                                  args.train_ratio,
                                                                  args.batch_size) 
-    
+        
     device = ('cuda' if torch.cuda.is_available() else 'cpu')
-    model = resnet18()
-    model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
-    model.to(device)
+    model = create_model(num_classes, device)
 
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.learning_rate)
@@ -183,6 +186,7 @@ def main():
     model = train_model(model=model, train_loader=train_dataloader, 
                         val_loader=val_dataloader, criterion=criterion, 
                         optimizer=optimizer, device=device, num_epochs=args.num_epochs)
+
 
 if __name__ == '__main__':
     main()
