@@ -59,8 +59,8 @@ jobs:
     - name: clean
       run: make clean
 
-    - name: compose build
-      run: make compose_build
+    - name: Run Docker Compose directly
+      run: docker-compose build
 
     - name: compose up
       run: make compose_up
