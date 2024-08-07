@@ -23,6 +23,7 @@ class TestModelTraining(unittest.TestCase):
         self.assertEqual(output.shape, torch.Size([1, 75]))
         
     def test_dataset_and_dataloader(self):
+        pass
         # transforms = get_transforms()
         # TODO fix paths with tmp images/csv file
         # train_dataloader, val_dataloader, num_classes = prepare_data(transforms, 
