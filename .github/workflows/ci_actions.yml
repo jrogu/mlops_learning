@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - workflow
   pull_request:
     branches:
       - main
+      - workflow
 
 jobs:
   build:
@@ -63,8 +65,8 @@ jobs:
     - name: clean
       run: make clean
 
-    - name: Run Docker Compose directly
-      run: docker-compose build
+    - name: compose build
+      run: make compose_build
 
     - name: compose up
       run: make compose_up

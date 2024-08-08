@@ -33,15 +33,15 @@ stop:
 
 .PHONY:
 compose_build:
-	docker-compose build
+	docker compose build
 
 .PHONY:
 compose_up:
-	docker-compose up -d
+	docker compose up -d
 
 .PHONY:
 compose_down:
-	docker-compose down
+	docker compose down
 
 .PHONY: format	
 format:
