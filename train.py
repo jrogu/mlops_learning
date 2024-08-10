@@ -9,6 +9,8 @@ from torchvision.models import resnet18, ResNet18_Weights
 import argparse 
 from torch.utils.data import Dataset, DataLoader
 import random
+import mlflow
+
 
 def get_transforms():
     train_transforms = transforms.Compose([transforms.Resize(224),
@@ -106,23 +108,35 @@ def train_eval_epoch(model, dataloader, criterion, optimizer, device, is_trainin
 
     epoch_loss = running_loss / len(dataloader)
     epoch_acc = correct / total
+    
+    if is_training:
+        mlflow.log_metrics({'train_loss': epoch_loss, 'train_acc' : epoch_acc})
+    else:
+        mlflow.log_metrics({'val_loss': epoch_loss, 'val_acc' : epoch_acc})
+    
     return model, epoch_loss, epoch_acc
 
 
-def train_model(model, train_loader, val_loader, criterion, optimizer, device, num_epochs=1):
-    for epoch in range(num_epochs):
+def train_model(model, train_loader, val_loader, criterion, optimizer, device, args):
+    with mlflow.start_run() as run:
         
-        model, train_loss, train_acc = train_eval_epoch(model=model, dataloader=train_loader, 
-                                                        criterion=criterion, optimizer=optimizer, 
-                                                        device=device, is_training=True)
-        model, val_loss, val_acc = train_eval_epoch(model=model, dataloader=val_loader, 
-                                                    criterion=criterion, optimizer=None,
-                                                    device=device, is_training=False)
+        mlflow.log_params(vars(args))
         
+        num_epochs = args.num_epochs
         
-        print(f'Epoch: {epoch}')
-        print(f'Train Loss: {train_loss:.3f} | Train Acc: {train_acc*100:.2f}%')
-        print(f'Val. Loss: {val_loss:.3f} |  Val. Acc: {val_acc*100:.2f}%')
+        for epoch in range(num_epochs):
+            
+            model, train_loss, train_acc = train_eval_epoch(model=model, dataloader=train_loader, 
+                                                            criterion=criterion, optimizer=optimizer, 
+                                                            device=device, is_training=True)
+            model, val_loss, val_acc = train_eval_epoch(model=model, dataloader=val_loader, 
+                                                        criterion=criterion, optimizer=None,
+                                                        device=device, is_training=False)
+            
+            
+            print(f'Epoch: {epoch}')
+            print(f'Train Loss: {train_loss:.3f} | Train Acc: {train_acc*100:.2f}%')
+            print(f'Val. Loss: {val_loss:.3f} |  Val. Acc: {val_acc*100:.2f}%')
 
     return model
 
@@ -165,10 +179,12 @@ def create_model(num_classes, device):
 
 def main():
     
+    mlflow.set_experiment("training-image-classificator")
+    
     seed_everything()
     
     args = parse_args()
-    
+
     transforms = get_transforms()
     
     train_dataloader, val_dataloader, num_classes = prepare_data(transforms, 
@@ -185,7 +201,7 @@ def main():
     
     model = train_model(model=model, train_loader=train_dataloader, 
                         val_loader=val_dataloader, criterion=criterion, 
-                        optimizer=optimizer, device=device, num_epochs=args.num_epochs)
+                        optimizer=optimizer, device=device, args=args)
 
 
 if __name__ == '__main__':
