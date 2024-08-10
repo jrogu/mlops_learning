@@ -7,4 +7,5 @@ python-dotenv==1.0.0
 flask==3.0.2
 torch==2.2.1+cpu
 torchvision==0.17.1+cpu
+mlflow==2.11.1
 -f https://download.pytorch.org/whl/torch_stable.html
