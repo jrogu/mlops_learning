@@ -8,5 +8,5 @@ flask==3.0.2
 torch==2.2.1+cpu
 torchvision==0.17.1+cpu
 mlflow==2.11.1
-torchinfo=1.8.0
+torchinfo==1.8.0
 -f https://download.pytorch.org/whl/torch_stable.html
