@@ -4,11 +4,13 @@ import pandas as pd
 import os
 from tqdm import tqdm
 import numpy as np
+import random
+import argparse 
+
 from torchvision import transforms
 from torchvision.models import resnet18, ResNet18_Weights
-import argparse 
 from torch.utils.data import Dataset, DataLoader
-import random
+from torchinfo import summary
 import mlflow
 
 
@@ -81,7 +83,7 @@ def prepare_data(transforms, train_path, train_csv_path, train_ratio, batch_size
 
     return train_dataloader, val_dataloader, len(labels)
 
-def train_eval_epoch(model, dataloader, criterion, optimizer, device, is_training):
+def train_eval_epoch(model, dataloader, criterion, optimizer, device, epoch, is_training):
     model.train() if is_training else model.eval()
     
     running_loss = 0.0
@@ -110,9 +112,9 @@ def train_eval_epoch(model, dataloader, criterion, optimizer, device, is_trainin
     epoch_acc = correct / total
     
     if is_training:
-        mlflow.log_metrics({'train_loss': epoch_loss, 'train_acc' : epoch_acc})
+        mlflow.log_metrics({'train_loss': epoch_loss, 'train_acc' : epoch_acc}, step=epoch)
     else:
-        mlflow.log_metrics({'val_loss': epoch_loss, 'val_acc' : epoch_acc})
+        mlflow.log_metrics({'val_loss': epoch_loss, 'val_acc' : epoch_acc}, step=epoch)
     
     return model, epoch_loss, epoch_acc
 
@@ -122,22 +124,29 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, device, a
         
         mlflow.log_params(vars(args))
         
+        
+        with open("model_summary.txt", "w", encoding="utf-8") as f:
+            f.write(str(summary(model)))
+        mlflow.log_artifact("model_summary.txt")
+        
         num_epochs = args.num_epochs
         
         for epoch in range(num_epochs):
             
             model, train_loss, train_acc = train_eval_epoch(model=model, dataloader=train_loader, 
                                                             criterion=criterion, optimizer=optimizer, 
-                                                            device=device, is_training=True)
+                                                            device=device, epoch=epoch, is_training=True)
             model, val_loss, val_acc = train_eval_epoch(model=model, dataloader=val_loader, 
                                                         criterion=criterion, optimizer=None,
-                                                        device=device, is_training=False)
+                                                        device=device, epoch=epoch, is_training=False)
             
             
             print(f'Epoch: {epoch}')
             print(f'Train Loss: {train_loss:.3f} | Train Acc: {train_acc*100:.2f}%')
             print(f'Val. Loss: {val_loss:.3f} |  Val. Acc: {val_acc*100:.2f}%')
 
+        mlflow.pytorch.log_model(model, 'model')
+        
     return model
 
 def parse_args():
