@@ -5,6 +5,7 @@ import random
 import os
 from torchvision import transforms
 from PIL import Image
+import shutil
 
 from train import create_model, prepare_data, get_transforms
 
@@ -25,7 +26,6 @@ def generate_random_image(filename, width=100, height=100):
             pixels[i, j] = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     
     image.save(filename)
-    print(f"Saved {filename}")
     
 def generate_csv(path):
     
@@ -34,7 +34,6 @@ def generate_csv(path):
         'label': ['SOUTHERN DOGFACE', 'ADONIS', 'BROWN SIPROETA']
     }
     df = pd.DataFrame(data)
-    print(path)
     df.to_csv(path, index=False)    
     
 
@@ -54,7 +53,12 @@ class TestModelTraining(unittest.TestCase):
 
         self.train_ratio = 0.7
         self.batch_size = 3
-        
+    
+    def tearDown(self):
+        if os.path.exists(TRAIN_IMAGES_PATH):
+            shutil.rmtree(TRAIN_IMAGES_PATH)
+        if os.path.exists(CSV_PATH):
+            os.remove('data/tmp_csv.csv')
         
     def test_model_output_shape(self):
         model = create_model(num_classes=self.num_classes, device='cpu')
