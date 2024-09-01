@@ -100,4 +100,4 @@ They are stored in docker volume, they are not erased after stopping docker.
 
 # TODO
 - add more tests
-- adjust github actions/makefile to major changes in code
+- adjust github actions/makefile to recent major changes in code
