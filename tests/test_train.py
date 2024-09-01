@@ -28,25 +28,25 @@ def generate_random_image(filename, width=100, height=100):
     print(f"Saved {filename}")
     
 def generate_csv(path):
+    
     data = {
         'filename': ['Image_1.jpg', 'Image_2.jpg', 'Image_3.jpg'],
         'label': ['SOUTHERN DOGFACE', 'ADONIS', 'BROWN SIPROETA']
     }
     df = pd.DataFrame(data)
+    print(path)
     df.to_csv(path, index=False)    
     
-    return df
 
 def set_up_tmp_data():
     os.makedirs(TRAIN_IMAGES_PATH, exist_ok=True)
     generate_csv(CSV_PATH)
-    for i in range(NUM_TMP_RECORDS):
-        generate_random_image(os.path.join(TRAIN_IMAGES_PATH, f'Image_{i}'))
+    for i in range(1, NUM_TMP_RECORDS + 1):
+        generate_random_image(os.path.join(TRAIN_IMAGES_PATH, f'Image_{i}.jpg'))
 
+set_up_tmp_data()
 
 class TestModelTraining(unittest.TestCase):
-
-
 
     def setUp(self):
         self.num_classes = 75
@@ -74,16 +74,13 @@ class TestModelTraining(unittest.TestCase):
     
         # Get batchsize from image becouse of randomness and small tmp data size TODO
         for img, label in train_dataloader:
-            print(img.shape, label.shape)
             self.assertEqual(img.shape, torch.Size([img.shape[0], 3, 224, 224]))
             self.assertEqual(label.shape, torch.Size([img.shape[0]]))
             break
         for img, label in val_dataloader:
-            print(img.shape, label.shape)
             self.assertEqual(img.shape, torch.Size([img.shape[0], 3, 224, 224]))
             self.assertEqual(label.shape, torch.Size([img.shape[0]]))
             break
         
 if __name__ == '__main__':
-    set_up_tmp_data()
     unittest.main()
