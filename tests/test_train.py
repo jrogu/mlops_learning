@@ -30,8 +30,8 @@ def generate_random_image(filename, width=100, height=100):
 def generate_csv(path):
     
     data = {
-        'filename': ['Image_1.jpg', 'Image_2.jpg', 'Image_3.jpg'],
-        'label': ['SOUTHERN DOGFACE', 'ADONIS', 'BROWN SIPROETA']
+        'filename': ['Image_1.jpg', 'Image_2.jpg', 'Image_3.jpg', 'Image_4.jpg', 'Image_5.jpg'],
+        'label': ['SOUTHERN DOGFACE', 'ADONIS', 'BROWN SIPROETA' ,'BROWN SIPROETA', 'BROWN SIPROETA']
     }
     df = pd.DataFrame(data)
     df.to_csv(path, index=False)    
@@ -40,7 +40,7 @@ def generate_csv(path):
 def set_up_tmp_data():
     os.makedirs(TRAIN_IMAGES_PATH, exist_ok=True)
     generate_csv(CSV_PATH)
-    for i in range(1, NUM_TMP_RECORDS + 1):
+    for i in range(1, NUM_TMP_RECORDS + 6):
         generate_random_image(os.path.join(TRAIN_IMAGES_PATH, f'Image_{i}.jpg'))
 
 set_up_tmp_data()
