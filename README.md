@@ -99,5 +99,6 @@ Example results: ![example_db](images/test_prediction_results.png)
 They are stored in docker volume, they are not erased after stopping docker.
 
 # TODO
+- Make it possible to train your own model and use them inside app
 - add more tests
 - adjust github actions/makefile to recent major changes in code
