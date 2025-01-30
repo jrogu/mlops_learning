@@ -1,13 +1,12 @@
 # MLOps Best Practices Project
 
-This project is inspired by book `Practical MLOps_ Operationalizing Machine Learning Models`. 
+This project is inspired by the book `Practical MLOps_ Operationalizing Machine Learning Models`. 
 
 ## Project Overview
 
-It's purpose it's to get familiar with concepts like CI/CD, deploying models with containerization, etc.  
+Its purpose is to get familiar with concepts like CI/CD, deploying models with containerization, etc.  
   
-This projects creates simple flask app, where you can pass an image to pretrained resnet18 and get prediction. The flask app and attached PostgreSQL db is containerizationed. This project contains tests, a Makefile, and uses GitHub Actions for CI/CD.
-
+This project creates a simple Flask app, where you can pass an image to a pretrained ResNet-18 model and get a prediction. The Flask app and the attached PostgreSQL database are containerized. This project includes tests, a Makefile, and uses GitHub Actions for CI/CD.
 
 ## Table of Contents
 
